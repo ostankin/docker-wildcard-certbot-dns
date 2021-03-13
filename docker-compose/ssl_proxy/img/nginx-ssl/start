@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# If CRONTAB is set, reload nginx according to the schedule
+if [ ! -z $CRONTAB ]; then
+  echo "$CRONTAB nginx -s reload" | /usr/bin/crontab - && /usr/sbin/crond
+fi
+
+# Configure default server to return 404
+# If you need different behaviour, specify your own "default" upstream in UPSTREAMS_CONFIG
+rm -rf /etc/nginx/conf.d/*
+cp /src/default.conf /etc/nginx/conf.d
+
+# Configure SSL settings
+export SSL_DIR=/ssl
+cat "/src/ssl.conf.tpl" | envsubst > /etc/nginx/conf.d/ssl.conf
+
+# Wait for SSL certificates to appear
+while : ; do
+  [ -f ${SSL_DIR}/${SSL_DOMAIN}/fullchain.pem ] && \
+  [ -f ${SSL_DIR}/${SSL_DOMAIN}/privkey.pem ] && \
+  break
+  >&2 echo "Waiting for certificates..."
+  sleep 10
+done
+
+# Hand over to the standard nginx entrypoint
+exec ./docker-entrypoint.sh "$@"    

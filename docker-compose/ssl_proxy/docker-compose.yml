@@ -1,0 +1,44 @@
+version: "3"
+services:
+  certbot:
+    image: ostankin/letsencrypt-dns
+    volumes:
+      - "le-certs:/certs"
+      - "signaling:/signaling"
+      - "./certbot_hooks:/hooks:ro"
+    restart: always
+    environment:
+      - PROVIDER=${CERTBOT_PROVIDER}
+      - CERTBOT_DOMAIN=*.${DOMAIN_NAME}
+      - CERTBOT_ALIAS=${DOMAIN_NAME}
+    env_file:
+      - "${CERTBOT_SECRET_FILE}"
+
+  nginx:
+    build: img/nginx-ssl
+    volumes:
+      - "le-certs:/ssl:ro"
+      - "signaling:/signaling"
+      - "${UPSTREAMS_CONFIG}:/upstreams.yml:ro"
+    ports:
+      - "${EXTERNAL_HTTPS_PORT}:443"
+      # Uncomment to open HTTP port
+      # - "${EXTERNAL_HTTP_PORT}:80"
+    environment:
+      - SSL_DOMAIN=${DOMAIN_NAME}
+    restart: always
+    healthcheck:
+      test: ["CMD", "/check"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - bridge_network
+
+volumes:
+  le-certs:
+  signaling:
+
+networks:
+  bridge_network:
+    driver: bridge

@@ -1,0 +1,6 @@
+site1:
+  url: http://site1
+  subdomain: site1
+site2:
+  url: http://site2
+  subdomain: site2

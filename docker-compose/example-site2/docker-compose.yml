@@ -1,0 +1,15 @@
+version: '3'
+services:
+   site2:
+     image: nginx:alpine
+     volumes:
+       - "./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro"
+       - "./index.html:/usr/share/nginx/html/index.html:ro"
+     restart: always
+     networks:
+       - ssl_proxy_bridge_network
+
+networks:
+  ssl_proxy_bridge_network:
+    external: true
+

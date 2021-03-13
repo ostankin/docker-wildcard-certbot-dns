@@ -1,0 +1,4 @@
+# ingnore the actual configs that the user may create
+docker-compose/ssl_proxy/.env
+docker-compose/ssl_proxy/.certbot-secret
+docker-compose/ssl_proxy/upstreams.yml

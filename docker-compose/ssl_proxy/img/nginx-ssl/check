@@ -1,0 +1,35 @@
+#!/bin/sh
+set -xeu
+
+function read_upstream_parameter {
+  yq e '.'$1'.'$2' // ""' /upstreams.yml
+}
+
+if [ -f /upstreams.yml ]; then
+  for upstream_name in $(yq e '. | keys | .[]' /upstreams.yml); do
+    # Retrieve upstream variables
+    # Export those needed for envsubst templating
+    export UPSTREAM_URL="$(read_upstream_parameter $upstream_name url)"
+    export UPSTREAM_SUBDOMAIN="$(read_upstream_parameter $upstream_name subdomain)"
+    upstream_config="/etc/nginx/conf.d/${upstream_name}.conf"
+    # Check connectivity to the upstream
+    if curl "$UPSTREAM_URL"; then
+      # If the config for a responding upstream does not exist, create it
+      if [ ! -f "$upstream_config" ]; then
+        export DOLLAR_SIGN='$'
+        cat "/src/upstream.conf.tpl" | envsubst > "$upstream_config"
+        touch /signaling/reload-nginx
+      fi
+    else
+      # If the config file for an unresponsive upstream exists, delete it
+      [ -f "$upstream_config" ] \
+      && rm "$upstream_config" \
+      && touch /signaling/reload-nginx
+    fi
+  done
+fi
+
+if [ -f /signaling/reload-nginx ]; then
+  nginx -s reload
+  rm /signaling/reload-nginx
+fi
