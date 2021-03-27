@@ -1,7 +1,7 @@
 server {
     listen       80;
     server_name  ${UPSTREAM_SUBDOMAIN}.${SSL_DOMAIN};
-    return 301 https://$host$request_uri;
+    return 301 https://${DOLLAR_SIGN}host${DOLLAR_SIGN}request_uri;
 }
 
 server {
