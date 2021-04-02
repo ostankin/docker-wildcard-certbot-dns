@@ -1,0 +1,11 @@
+function read_common_parameter {
+    yq e '.common // ""' /config.yml 2>/dev/null
+}
+
+function read_upstream_parameter {
+    yq e '.upstreams.'$1'.'$2' // ""' /config.yml 2>/dev/null
+}
+
+function get_list_of_upstreams {
+    yq e '.upstreams | keys | .[]' /config.yml  2>/dev/null
+}

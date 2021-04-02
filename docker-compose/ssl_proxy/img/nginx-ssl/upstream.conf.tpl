@@ -6,6 +6,7 @@ server {
 
 server {
     include /etc/nginx/conf.d/ssl.conf;
+${UPSTREAM_INCLUDE}
     listen       443 ssl;
     server_name  ${UPSTREAM_SUBDOMAIN}.${SSL_DOMAIN};
 

@@ -10,6 +10,7 @@ RUN (export YQ_VERSION=4.6.1 \
 COPY ssl.conf.tpl /src
 COPY upstream.conf.tpl /src
 COPY default.conf /src
+COPY functions /functions
 COPY check /check
 COPY start /start
 ENTRYPOINT [ "/start" ]

@@ -14,6 +14,10 @@ cp /src/default.conf /etc/nginx/conf.d
 export SSL_DIR=/ssl
 cat "/src/ssl.conf.tpl" | envsubst > /etc/nginx/conf.d/ssl.conf
 
+# Copy common nginx config from the custom config
+. /functions
+read_common_parameter > /etc/nginx/conf.d/common.conf
+
 # Wait for SSL certificates to appear
 while : ; do
   [ -f ${SSL_DIR}/${SSL_DOMAIN}/fullchain.pem ] && \
