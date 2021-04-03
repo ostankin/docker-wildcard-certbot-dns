@@ -1,7 +1,7 @@
 version: "3"
 services:
   certbot:
-    image: ostankin/letsencrypt-dns
+    image: salemove/letsencrypt-dns
     volumes:
       - "le-certs:/certs"
       - "signaling:/signaling"
