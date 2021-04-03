@@ -1,6 +1,6 @@
 version: '3'
 services:
-   site2:
+   site2-nginx:
      image: nginx:alpine
      volumes:
        - "./nginx.conf:/etc/nginx/conf.d/nginx.conf:ro"
