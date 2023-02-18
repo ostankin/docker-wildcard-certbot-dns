@@ -13,5 +13,6 @@ COPY default.conf /src
 COPY functions /functions
 COPY check /check
 COPY start /start
+RUN chmod +x /check /start
 ENTRYPOINT [ "/start" ]
 CMD ["nginx", "-g", "daemon off;"]
