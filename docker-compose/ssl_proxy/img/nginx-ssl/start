@@ -14,6 +14,14 @@ cp /src/default.conf /etc/nginx/conf.d
 export SSL_DIR=/ssl
 cat "/src/ssl.conf.tpl" | envsubst > /etc/nginx/conf.d/ssl.conf
 
+# enable websocket support
+cat << EOF >/etc/nginx/conf.d/ws.conf
+map \$http_upgrade \$connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+EOF
+
 # Copy common nginx config from the custom config
 . /functions
 read_common_parameter > /etc/nginx/conf.d/common.conf

@@ -1,5 +1,6 @@
 common: |
   limit_req_zone $binary_remote_addr zone=mylimit:10m rate=1r/s;
+  proxy_max_temp_file_size 1024k;
 upstreams:
   site1:
     url: http://site1-nginx
